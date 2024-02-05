@@ -4,7 +4,7 @@ import inspect
 from typing import Annotated, Callable, Final, get_args, get_origin
 
 import pytest
-from fastapi import params
+from fastapi import Depends, params
 
 from faddi.container import DependencyContainer
 
@@ -57,3 +57,32 @@ def test_annotation_raises_type_error():
 
         class MyContainer(DependencyContainer):
             x: int
+
+
+def test_create_dependency_sequence():
+    """Test create dependency sequence."""
+
+    class MyContainer(DependencyContainer):
+        x: Callable[..., int]
+        y: Callable[..., str]
+
+    def my_dependency() -> int:
+        return 5
+
+    def my_dependency_2() -> str:
+        return "foo"
+
+    def non_injected_dependent() -> int:
+        return 8
+
+    dependency_sequence: Final = [Depends(MyContainer.x), Depends(MyContainer.y), Depends(non_injected_dependent)]
+    my_container: Final = MyContainer(x=my_dependency, y=my_dependency_2)
+    new_dependencies: Final = my_container.create_dependency_sequence(dependency_sequence)
+
+    assert all(
+        [
+            new_dependencies[0].dependency() == 5,  # type: ignore [reportOptionalCall]
+            new_dependencies[1].dependency() == "foo",  # type: ignore [reportOptionalCall]
+            new_dependencies[2].dependency() == 8,  # type: ignore [reportOptionalCall]
+        ],
+    )

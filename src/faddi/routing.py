@@ -4,10 +4,12 @@ Factory for FastApi routers that inject delayed dependants into actual dependant
 """
 
 import sys
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Callable, Final, Generic, TypeVar
+from typing import Any, Callable, Final, Generic, TypeVar, Union
 
 from fastapi import APIRouter
+from fastapi.params import Depends
 
 from faddi.container import DependencyContainer
 
@@ -43,11 +45,12 @@ class InjectableRouter:
     """A router that can be injected with dependencies from a dependency container."""
 
     @_CopySignature(APIRouter.__init__)
-    def __init__(self, *args: list[Any], **kwargs: dict[str, Any]):
+    def __init__(self, dependencies: Union[Sequence[Depends], None] = None, *args: list[Any], **kwargs: dict[str, Any]):
         """Create a new injectable router."""
         self._app_args = args
         self._app_kwargs = kwargs
         self._api_routes: list[_Route] = []
+        self._router_dependencies = dependencies
 
     @_CopySignature(APIRouter.get)
     def get(self, *args: list[Any], **kwargs: dict[str, Any]):  # noqa: ANN201
@@ -101,7 +104,10 @@ class InjectableRouter:
 
     def create_router(self, container: DependencyContainer) -> APIRouter:
         """Create a router with dependencies injected from the container."""
-        router: Final = APIRouter(*self._app_args, **self._app_kwargs)
+        new_dependencies = self._router_dependencies
+        if new_dependencies is not None:
+            new_dependencies = container.create_dependency_sequence(new_dependencies)
+        router: Final = APIRouter(*self._app_args, dependencies=new_dependencies, **self._app_kwargs)
         for route in self._api_routes:
             container.insert_dependency_from_container(route.func)
             route_wrapper = route.router_method(router, *route.args, **route.kwargs)

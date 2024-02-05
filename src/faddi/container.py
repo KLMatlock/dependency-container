@@ -5,12 +5,12 @@ Factory for FastApi routers that inject delayed dependants into actual dependant
 
 import sys
 from abc import ABCMeta
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from inspect import Parameter, Signature, signature
 from typing import Annotated, Any, Final, TypeVar, Union, get_args, get_origin
 
-from fastapi import Depends
+from fastapi import Depends, params
 
 if sys.version_info >= (3, 10):
     _dataclass_kwargs: Final = {"frozen": True, "slots": True}
@@ -99,3 +99,16 @@ class DependencyContainer(metaclass=_DependenceContainerMeta):
                 new_param = param.replace(annotation=Annotated[delayed_dependent.source_type, Depends(dependent)])
             merged_params.append(new_param)
         func.__signature__ = Signature(parameters=merged_params, return_annotation=func_sig.return_annotation)  # type: ignore [reportFunctionMemberAccess]
+
+    def create_dependency_sequence(self, dependencies: Sequence[params.Depends]) -> Sequence[params.Depends]:
+        """Iterate through a sequence of dependencies and create the realized values."""
+        new_dependencies: Final[Sequence[params.Depends]] = []
+        for dependency in dependencies:
+            wrapped_dependency = dependency.dependency
+            if isinstance(wrapped_dependency, _DelayedDependant):
+                new_dependency = Depends(getattr(self, wrapped_dependency.attr))
+                new_dependencies.append(new_dependency)
+            else:
+                new_dependencies.append(dependency)
+
+        return new_dependencies

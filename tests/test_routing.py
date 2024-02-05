@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from typing import Annotated, Final
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 
 from faddi import DependencyContainer, InjectableRouter
@@ -91,3 +91,46 @@ def test_router_delete():
     test_client: Final = create_test_client(router)
     res: Final = test_client.delete("/api/foo")
     assert all([res.status_code == 200, res.json() == 5])
+
+
+def test_router_dependency():
+    """Test injecting router based dependencies."""
+
+    class _SequenceContainer(DependencyContainer):
+        x: Callable[..., None]
+
+    noninject_called = False
+
+    def _non_injected_dependency() -> None:
+        nonlocal noninject_called
+        noninject_called = True
+
+    router: Final = InjectableRouter(
+        prefix="/api",
+        dependencies=[Depends(_SequenceContainer.x), Depends(_non_injected_dependency)],
+    )
+
+    @router.get("/foo")
+    def foo() -> int:
+        return 5
+
+    called = False
+
+    def _my_dependency() -> None:
+        nonlocal called
+        called = True
+
+    container: Final = _SequenceContainer(x=_my_dependency)
+    api_router: Final = router.create_router(container)
+    app: Final = FastAPI()
+    app.include_router(api_router)
+    test_client: Final = TestClient(app)
+
+    res: Final = test_client.get("/api/foo")
+    assert all(
+        [
+            called,
+            noninject_called,
+            res.status_code == 200,
+        ],
+    )
