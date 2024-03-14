@@ -50,7 +50,7 @@ PASTE TRACEBACK HERE
      redacting sensitive information. -->
 
 ```bash
-python -m faddi.debug  # | xclip -selection clipboard
+python -m dependency-container.debug  # | xclip -selection clipboard
 ```
 
 PASTE OUTPUT HERE

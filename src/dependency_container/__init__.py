@@ -3,7 +3,7 @@
 Support delayed dependency injection in FastApi to enable app constructor pattern.
 """
 
-from faddi.container import DependencyContainer
-from faddi.routing import InjectableRouter
+from dependency_container.container import DependencyContainer
+from dependency_container.routing import InjectableRouter
 
 __all__: list[str] = ["DependencyContainer", "InjectableRouter"]

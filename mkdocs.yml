@@ -1,10 +1,10 @@
 site_name: "FastApi Delayed Dependency Injection"
 site_description: "Support delayed dependency injection in FastApi to enable app constructor pattern."
-site_url: "https://klmatlock.github.io/faddi"
-repo_url: "https://github.com/klmatlock/faddi"
-repo_name: "klmatlock/faddi"
+site_url: "https://klmatlock.github.io/dependency-container"
+repo_url: "https://github.com/klmatlock/dependency-container"
+repo_name: "klmatlock/dependency-container"
 site_dir: "site"
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/faddi]
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/dependency-container]
 copyright: Copyright &copy; 2024 Kevin Matlock
 edit_uri: edit/main/docs/
 
@@ -125,7 +125,7 @@ plugins:
           summary: true
 - git-committers:
     enabled: !ENV [DEPLOY, false]
-    repository: klmatlock/faddi
+    repository: klmatlock/dependency-container
 - minify:
     minify_html: !ENV [DEPLOY, false]
 - group:
@@ -138,6 +138,6 @@ extra:
   - icon: fontawesome/brands/github
     link: https://github.com/klmatlock
   - icon: fontawesome/brands/gitter
-    link: https://gitter.im/faddi/community
+    link: https://gitter.im/dependency-container/community
   - icon: fontawesome/brands/python
-    link: https://pypi.org/project/faddi/
+    link: https://pypi.org/project/dependency-container/

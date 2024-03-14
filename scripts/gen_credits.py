@@ -1,4 +1,5 @@
 """Script to generate the project's credits."""
+
 import os
 import re
 import sys

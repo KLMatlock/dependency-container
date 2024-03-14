@@ -11,7 +11,7 @@ from typing import Any, Callable, Final, Generic, TypeVar, Union
 from fastapi import APIRouter
 from fastapi.params import Depends
 
-from faddi.container import DependencyContainer
+from dependency_container.container import DependencyContainer
 
 if sys.version_info >= (3, 10):
     _dataclass_kwargs: Final = {"frozen": True, "slots": True}

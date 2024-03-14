@@ -149,9 +149,9 @@ def check_api(ctx: Context) -> None:
 
     griffe_check = lazy(g_check, name="griffe.check")
     ctx.run(
-        griffe_check("faddi", search_paths=["src"], color=True),
+        griffe_check("dependency-container", search_paths=["src"], color=True),
         title="Checking for API breaking changes",
-        command="griffe check -ssrc faddi",
+        command="griffe check -ssrc dependency-container",
         nofail=True,
     )
 

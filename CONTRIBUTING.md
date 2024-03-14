@@ -5,12 +5,12 @@ Every little bit helps, and credit will always be given.
 
 ## Environment setup
 
-Nothing easier!
+Development only requires a Python 3.9+ interpreter.
 
 Fork and clone the repository, then:
 
 ```bash
-cd faddi
+cd dependency-container
 make setup
 ```
 

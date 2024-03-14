@@ -3,7 +3,7 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project]
-name = "faddi"
+name = "dependency-container"
 description = "Support delayed dependency injection in FastApi to enable app constructor pattern."
 authors = [{name = "Kevin Matlock", email = "kevin.matlock@gmail.com"}]
 license = {text = "MIT"}
@@ -31,13 +31,13 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://klmatlock.github.io/faddi"
-Documentation = "https://klmatlock.github.io/faddi"
-Changelog = "https://klmatlock.github.io/faddi/changelog"
-Repository = "https://github.com/klmatlock/faddi"
-Issues = "https://github.com/klmatlock/faddi/issues"
-Discussions = "https://github.com/klmatlock/faddi/discussions"
-Gitter = "https://gitter.im/faddi/community"
+Homepage = "https://klmatlock.github.io/dependency-container"
+Documentation = "https://klmatlock.github.io/dependency-container"
+Changelog = "https://klmatlock.github.io/dependency-container/changelog"
+Repository = "https://github.com/klmatlock/dependency-container"
+Issues = "https://github.com/klmatlock/dependency-container/issues"
+Discussions = "https://github.com/klmatlock/dependency-container/discussions"
+Gitter = "https://gitter.im/dependency-container/community"
 
 
 [tool.pdm]
@@ -184,7 +184,7 @@ docstring-quotes = "double"
 ban-relative-imports = "all"
 
 [tool.ruff.isort]
-known-first-party = ["faddi"]
+known-first-party = ["dependency-container"]
 
 [tool.ruff.pydocstyle]
 convention = "google"

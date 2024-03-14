@@ -1,4 +1,4 @@
-"""Tests suite for `faddi`."""
+"""Tests suite for `dependency-container`."""
 
 from pathlib import Path
 
