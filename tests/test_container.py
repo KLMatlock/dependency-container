@@ -5,7 +5,8 @@ from typing import Annotated, Callable, Final, get_args, get_origin
 
 import pytest
 from dependency_container.container import DependencyContainer
-from fastapi import Depends, params
+from fastapi import Depends, FastAPI, params
+from fastapi.testclient import TestClient
 
 
 def test_dependency_container_inject():
@@ -93,30 +94,27 @@ def test_dependency_container_inject_recursive():
     class MyContainer(DependencyContainer):
         x: Callable[..., int]
 
-    def my_func_dependency(arg1: Annotated[int, MyContainer.x]) -> int:
-        return arg1
+    def my_func_dependency(arg1_delayed: Annotated[int, MyContainer.x]) -> int:
+        return arg1_delayed
+
+    def my_dependency() -> int:
+        return 5
 
     def my_func(
         arg1: Annotated[int, Depends(my_func_dependency)],
         *,
         key: str = "bar",
-    ) -> list:
-        del arg1, key
-        return []
-
-    def my_dependency() -> int:
-        return 5
+    ) -> int:
+        del key
+        return arg1
 
     my_container: Final = MyContainer(x=my_dependency)
     my_container.insert_dependency_from_container(my_func)
-    new_sig: Final = inspect.signature(my_func)
-    new_params: Final = new_sig.parameters
 
-    injected_annotated: Final = new_params["arg1"].annotation
-    annotated_args: Final = get_args(injected_annotated)
-    annotation_test: Final[list[bool]] = [
-        get_origin(injected_annotated) is Annotated,
-        annotated_args[0] is int,
-        isinstance(annotated_args[1], params.Depends),
-    ]
-    assert all(annotation_test)
+    app = FastAPI()
+
+    app.get("/test")(my_func)
+    client = TestClient(app)
+    resp = client.get("/test")
+
+    assert resp.content == b"5"

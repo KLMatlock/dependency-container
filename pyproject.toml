@@ -201,9 +201,6 @@ norecursedirs = [
   "dist",
   "build",
 ]
-addopts = [
-  "--cov"
-]
 testpaths = [
     "tests",
     "integration",
@@ -236,4 +233,3 @@ exclude_lines = [
 ]
 [tool.coverage.json]
 output = "htmlcov/coverage.json"
-

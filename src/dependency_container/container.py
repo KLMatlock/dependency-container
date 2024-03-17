@@ -8,7 +8,7 @@ from abc import ABCMeta
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from inspect import Parameter, Signature, signature
-from typing import Annotated, Any, Final, TypeVar, Union, get_args, get_origin
+from typing import Annotated, Any, Final, Optional, TypeVar, Union, get_args, get_origin
 
 from fastapi import Depends, params
 
@@ -65,13 +65,13 @@ class _DependenceContainerMeta(ABCMeta):
         return dataclass(base_cls)
 
 
-def _get_delayed_dependent(annotation: type) -> Union[_DelayedDependant, None]:
+def _get_delayed_dependent(annotation: type) -> Optional[Union[_DelayedDependant, params.Depends]]:
     """Return the delayed dependent if found in the type annotation."""
     if get_origin(annotation) is not Annotated:
         return None
     annotation_args = get_args(annotation)
     for annotated_value in annotation_args[1:]:
-        if isinstance(annotated_value, _DelayedDependant):
+        if isinstance(annotated_value, (_DelayedDependant, params.Depends)):
             return annotated_value
     return None
 
@@ -93,10 +93,14 @@ class DependencyContainer(metaclass=_DependenceContainerMeta):
         # Go through each parameter and replace ones annotated with injected values to new ones.
         for param in func_sig.parameters.values():
             new_param: Parameter = param
-            if delayed_dependent := _get_delayed_dependent(param.annotation):
+            delayed_dependent = _get_delayed_dependent(param.annotation)
+            if isinstance(delayed_dependent, _DelayedDependant):
                 dependent: Callable[..., Any] = getattr(self, delayed_dependent.attr)
                 # TODO: Get original annotation.
                 new_param = param.replace(annotation=Annotated[delayed_dependent.source_type, Depends(dependent)])
+            elif isinstance(delayed_dependent, params.Depends) and delayed_dependent.dependency:
+                dependent: Callable[..., Any] = delayed_dependent.dependency
+                self.insert_dependency_from_container(dependent)
             merged_params.append(new_param)
         func.__signature__ = Signature(parameters=merged_params, return_annotation=func_sig.return_annotation)  # type: ignore [reportFunctionMemberAccess]
 
@@ -108,7 +112,9 @@ class DependencyContainer(metaclass=_DependenceContainerMeta):
             if isinstance(wrapped_dependency, _DelayedDependant):
                 new_dependency = Depends(getattr(self, wrapped_dependency.attr))
                 new_dependencies.append(new_dependency)
-            else:
+            elif wrapped_dependency:
+                self.insert_dependency_from_container(wrapped_dependency)
                 new_dependencies.append(dependency)
+            new_dependencies.append(dependency)
 
         return new_dependencies

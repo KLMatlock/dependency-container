@@ -263,7 +263,7 @@ def test(ctx: Context, match: str = "") -> None:
     ctx.run(
         pytest.run("-n", "auto", "tests", select=match, color="yes"),
         title=pyprefix("Running tests"),
-        command=f"pytest -n auto -k{match!r} --color=yes tests",
+        command=f"pytest -n auto -k{match!r} --color=yes --cov tests",
     )
 
 

@@ -133,3 +133,38 @@ def test_router_dependency():
             res.status_code == 200,
         ],
     )
+
+
+def test_router_dependency_recursive():
+    """Test injecting router based dependencies with recursive dependencies."""
+
+    class _SequenceContainer(DependencyContainer):
+        x: Callable[..., int]
+
+    injected_called = False
+
+    def _injected_dependency() -> int:
+        nonlocal injected_called
+        injected_called = True
+        return 5
+
+    def _normal_dependency(arg1: Annotated[int, _SequenceContainer.x]) -> int:
+        return arg1
+
+    router: Final = InjectableRouter(
+        prefix="/api",
+        dependencies=[Depends(_normal_dependency)],
+    )
+
+    @router.get("/foo")
+    def foo() -> int:
+        return 5
+
+    container: Final = _SequenceContainer(x=_injected_dependency)
+    api_router: Final = router.create_router(container)
+    app: Final = FastAPI()
+    app.include_router(api_router)
+    test_client: Final = TestClient(app)
+
+    test_client.get("/api/foo")
+    assert injected_called, "Did not injected dependency."
