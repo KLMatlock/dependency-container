@@ -15,7 +15,6 @@ env:
   LANG: en_US.utf-8
   LC_ALL: en_US.utf-8
   PYTHONIOENCODING: UTF-8
-  VIRTUAL_ENV: ${{ github.workspace }}/.venv
 
 jobs:
 
