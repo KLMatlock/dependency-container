@@ -115,6 +115,7 @@ class DependencyContainer(metaclass=_DependenceContainerMeta):
             elif wrapped_dependency:
                 self.insert_dependency_from_container(wrapped_dependency)
                 new_dependencies.append(dependency)
-            new_dependencies.append(dependency)
+            else:
+                new_dependencies.append(dependency)
 
         return new_dependencies

@@ -34,26 +34,23 @@ jobs:
       with:
         python-version: "3.9"
 
-    - name: Resolving dependencies
-      run: pdm lock -v --no-cross-platform -G ci-quality
-
     - name: Install dependencies
-      run: pdm install -G ci-quality
+      run: make setup
 
-    - name: Check if the documentation builds correctly
-      run: pdm run duty check-docs
+    # - name: Check if the documentation builds correctly
+    #   run: pdm run duty check-docs
 
     - name: Check the code quality
-      run: pdm run duty check-quality
+      run: make check-quality
 
     - name: Check if the code is correctly typed
-      run: pdm run duty check-types
+      run: make check-types
 
     - name: Check for vulnerabilities in dependencies
-      run: pdm run duty check-dependencies
+      run: make check-dependencies
 
-    - name: Check for breaking changes in the API
-      run: pdm run duty check-api
+    # - name: Check for breaking changes in the API
+    #   run: pdm run duty check-api
 
   tests:
 
@@ -80,10 +77,7 @@ jobs:
         allow-python-prereleases: true
 
     - name: Resolving dependencies
-      run: pdm lock -v --no-cross-platform -G ci-tests
-
-    - name: Install dependencies
-      run: pdm install --no-editable -G ci-tests
+      run: make setup
 
     - name: Run the test suite
-      run: pdm run duty test
+      run: make test

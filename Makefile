@@ -17,8 +17,6 @@ test_args = match
 
 BASIC_DUTIES = \
 	changelog \
-	check-api \
-	check-dependencies \
 	clean \
 	coverage \
 	docs \
@@ -32,6 +30,8 @@ QUALITY_DUTIES = \
 	check-quality \
 	check-docs \
 	check-types \
+	check-api \
+	check-dependencies \
 	test
 
 .PHONY: help
