@@ -23,7 +23,7 @@ BASIC_DUTIES = \
 	docs \
 	docs-deploy \
 	format \
-	release \
+	build \
 	vscode
 
 QUALITY_DUTIES = \

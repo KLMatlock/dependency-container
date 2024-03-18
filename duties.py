@@ -221,21 +221,15 @@ def format(ctx: Context) -> None:
     ctx.run(ruff.format(*PY_SRC_LIST), title="Formatting code")
 
 
-@duty(post=["docs-deploy"])
-def release(ctx: Context, version: str) -> None:
-    """Release a new Python package.
+@duty
+def build(ctx: Context) -> None:
+    """Build a new Python package.
 
     Parameters:
         ctx: The context instance (passed automatically).
         version: The new version number to use.
     """
-    ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
-    ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
-    ctx.run(f"git tag {version}", title="Tagging commit", pty=PTY)
-    ctx.run("git push", title="Pushing commits", pty=False)
-    ctx.run("git push --tags", title="Pushing tags", pty=False)
     ctx.run("pdm build", title="Building dist/wheel", pty=PTY)
-    ctx.run("twine upload --skip-existing dist/*", title="Publishing version", pty=PTY)
 
 
 @duty(silent=True, aliases=["coverage"])

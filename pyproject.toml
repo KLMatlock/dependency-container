@@ -41,10 +41,13 @@ Gitter = "https://gitter.im/dependency-container/community"
 
 
 [tool.pdm]
-version = {source = "scm"}
 plugins = [
     "pdm-multirun",
 ]
+
+[tool.pdm.version]
+source = "file"
+path = "src/dependency_container/__init__.py"
 
 [tool.pdm.build]
 package-dir = "src"
