@@ -32,7 +32,7 @@ jobs:
       with:
         enable-cache: true
     - name: Pin Rye
-      run: rye pin ${{ matrix.python-version }}
+      run: rye pin 3.10
     - name: Install dependencies
       run: make setup
     - name: Check the code quality
