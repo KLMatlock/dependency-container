@@ -31,8 +31,6 @@ jobs:
       uses: eifinger/setup-rye@v4
       with:
         enable-cache: true
-    - name: Pin Rye
-      run: rye pin 3.10
     - name: Install dependencies
       run: make setup
     - name: Check the code quality

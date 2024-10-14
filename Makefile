@@ -17,3 +17,7 @@ format:
 lint:
 	rye lint
 	rye run pyright .
+
+.PHONY: build
+build:
+	rye build
