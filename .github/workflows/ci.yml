@@ -25,32 +25,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
     - name: Fetch all tags
       run: git fetch --depth=1 --tags
-
-    - name: Set up PDM
-      uses: pdm-project/setup-pdm@v3
+    - name: Install the latest version of rye
+      uses: eifinger/setup-rye@v4
       with:
-        python-version: "3.9"
-
+        enable-cache: true
+    - name: Pin Rye
+      run: rye pin ${{ matrix.python-version }}
     - name: Install dependencies
       run: make setup
-
-    # - name: Check if the documentation builds correctly
-    #   run: pdm run duty check-docs
-
     - name: Check the code quality
-      run: make check-quality
-
-    - name: Check if the code is correctly typed
-      run: make check-types
-
-    - name: Check for vulnerabilities in dependencies
-      run: make check-dependencies
-
-    # - name: Check for breaking changes in the API
-    #   run: pdm run duty check-api
+      run: make lint
 
   tests:
 
@@ -60,7 +46,6 @@ jobs:
         os:
         - ubuntu-latest
         python-version:
-        - "3.9"
         - "3.10"
         - "3.11"
         - "3.12"
@@ -70,11 +55,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Set up PDM
-      uses: pdm-project/setup-pdm@v3
+    - name: Install the latest version of rye
+      uses: eifinger/setup-rye@v4
       with:
-        python-version: ${{ matrix.python-version }}
-        allow-python-prereleases: true
+        enable-cache: true
+
+    - name: Pin Rye
+      run: rye pin ${{ matrix.python-version }}
 
     - name: Resolving dependencies
       run: make setup
