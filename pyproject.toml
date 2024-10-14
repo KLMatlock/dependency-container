@@ -1,15 +1,15 @@
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
 [project]
 name = "dependency-container"
 description = "Support delayed dependency injection in FastApi to enable app constructor pattern."
-authors = [{name = "Kevin Matlock", email = "kevin.matlock@gmail.com"}]
-license = {text = "MIT"}
+authors = [
+    { name = "Kevin Matlock", email = "kevin.matlock@gmail.com" }
+]
+dependencies = [
+    "fastapi>=0.95.0",
+]
 readme = "README.md"
-requires-python = ">=3.9"
-keywords = []
+requires-python = ">= 3.10"
+license = { text = "MIT" }
 dynamic = ["version"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -17,7 +17,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -25,9 +24,6 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Utilities",
     "Typing :: Typed",
-]
-dependencies = [
-    "fastapi>=0.95.0"
 ]
 
 [project.urls]
@@ -39,50 +35,41 @@ Issues = "https://github.com/klmatlock/dependency-container/issues"
 Discussions = "https://github.com/klmatlock/dependency-container/discussions"
 Gitter = "https://gitter.im/dependency-container/community"
 
-
-[tool.pdm]
-plugins = [
-    "pdm-multirun",
+[project.optional-dependencies]
+faststream = [
+    "faststream>=0.5.26",
 ]
 
-[tool.pdm.version]
-source = "file"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
 path = "src/dependency_container/__init__.py"
 
-[tool.pdm.build]
-package-dir = "src"
-editable-backend = "editables"
-
-[tool.pdm.dev-dependencies]
-duty = [ "duty>=1.2.0" ]
-maintain = [
-    "towncrier>=23.11.0",
-]
-docs = [
-    "mkdocs-gen-files>=0.5.0",
-    "mkdocs-material>=9.5.7"
-]
-quality = [
-    "ruff>=0.0",
+[tool.rye]
+managed = true
+dev-dependencies = [
     "griffe>=0.40.0",
-]
-tests = [
+    "httpx>=0.26.0",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-material>=9.5.7",
+    "pyright>=1.1.349",
     "pytest>=7.4",
     "pytest-cov>=4.1",
     "pytest-randomly>=3.15",
     "pytest-xdist>=3.3",
-]
-typing = [
-    "pyright>=1.1.349",
+    "ruff>=0.0",
+    "towncrier>=23.11.0",
     "types-markdown>=3.5",
     "types-pyyaml>=6.0",
 ]
-security = [
-    "safety>=2.3",
-]
-test = [
-    "httpx>=0.26.0",
-]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dependency_container"]
 
 
 [tool.ruff]
@@ -92,6 +79,8 @@ exclude = [
     "fixtures",
     "site",
 ]
+
+[tool.ruff.lint]
 select = [
     "A",
     "ANN",
@@ -159,9 +148,11 @@ ignore = [
     "PLR0915",  # Too many statements
     "SLF001", # Private member accessed
     "TRY003",  # Avoid specifying long messages outside the exception class
+    "ISC001", # Checks for implicitly concatenated strings on a single line, handled by ruff fmt.
+    "COM812", # Check for trailing commas, ruff fmt handles this.
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "src/*/cli.py" = [
     "T201",  # Print statement
 ]
@@ -180,16 +171,16 @@ ignore = [
     "S101",  # Use of assert detected
 ]
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["dependency-container"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.format]

@@ -3,9 +3,10 @@
 from collections.abc import Callable
 from typing import Annotated, Final
 
-from dependency_container import DependencyContainer, InjectableRouter
 from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
+
+from dependency_container import DependencyContainer, InjectableRouter
 
 
 class _MyContainer(DependencyContainer):

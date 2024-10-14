@@ -4,9 +4,10 @@ import inspect
 from typing import Annotated, Callable, Final, get_args, get_origin
 
 import pytest
-from dependency_container.container import DependencyContainer
 from fastapi import Depends, FastAPI, params
 from fastapi.testclient import TestClient
+
+from dependency_container.container import DependencyContainer
 
 
 def test_dependency_container_inject():
@@ -41,12 +42,12 @@ def test_dependency_container_inject():
         get_origin(injected_annotated) is Annotated,
         annotated_args[0] is int,
         isinstance(annotated_args[1], params.Depends),
-        new_params["arg2"].annotation == int,
+        new_params["arg2"].annotation is int,
         get_origin(noninject_annotated) is Annotated,
         noninject_annotated_args[0] is int,
         noninject_annotated_args[1] == "foo",
         new_params["key"].default == "bar",
-        new_sig.return_annotation == list,
+        new_sig.return_annotation is list,
     ]
     assert all(annotation_test)
 
