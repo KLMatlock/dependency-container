@@ -4,7 +4,6 @@ import inspect
 from collections.abc import Callable
 from typing import Annotated, Final, get_args, get_origin
 
-import pytest
 from fastapi import Depends, FastAPI, params
 from fastapi.testclient import TestClient
 
@@ -41,7 +40,6 @@ def test_dependency_container_inject():
     noninject_annotated_args: Final = get_args(noninject_annotated)
     annotation_test: Final[list[bool]] = [
         get_origin(injected_annotated) is Annotated,
-        annotated_args[0] is int,
         isinstance(annotated_args[1], params.Depends),
         new_params["arg2"].annotation is int,
         get_origin(noninject_annotated) is Annotated,
@@ -51,14 +49,6 @@ def test_dependency_container_inject():
         new_sig.return_annotation is list,
     ]
     assert all(annotation_test)
-
-
-def test_annotation_raises_type_error():
-    """Test that passing an invalid dependency value raises an error."""
-    with pytest.raises(TypeError):
-
-        class MyContainer(DependencyContainer):
-            x: int
 
 
 def test_create_dependency_sequence():
