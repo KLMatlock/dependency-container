@@ -8,15 +8,9 @@ from abc import ABCMeta
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from inspect import Parameter, Signature, signature
-from typing import Annotated, Any, Final, Optional, TypeVar, Union, get_args, get_origin
+from typing import Annotated, Any, Final, TypeVar, get_args, get_origin
 
 from fastapi import Depends, params
-
-if sys.version_info >= (3, 10):
-    _dataclass_kwargs: Final = {"frozen": True, "slots": True}
-else:
-    _dataclass_kwargs: Final = {"frozen": True}
-
 
 if sys.version_info >= (3, 11):
     from typing import dataclass_transform
@@ -34,7 +28,7 @@ else:
         return decorator
 
 
-@dataclass(**_dataclass_kwargs)
+@dataclass(frozen=True, slots=True)
 class _DelayedDependant:
     attr: str
     source_type: type
@@ -65,13 +59,13 @@ class _DependenceContainerMeta(ABCMeta):
         return dataclass(base_cls)
 
 
-def _get_delayed_dependent(annotation: type) -> Optional[Union[_DelayedDependant, params.Depends]]:
+def _get_delayed_dependent(annotation: type) -> _DelayedDependant | params.Depends | None:
     """Return the delayed dependent if found in the type annotation."""
     if get_origin(annotation) is not Annotated:
         return None
     annotation_args = get_args(annotation)
     for annotated_value in annotation_args[1:]:
-        if isinstance(annotated_value, (_DelayedDependant, params.Depends)):
+        if isinstance(annotated_value, _DelayedDependant | params.Depends):
             return annotated_value
     return None
 

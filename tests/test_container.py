@@ -1,7 +1,8 @@
 """Tests for Dependency Container Class."""
 
 import inspect
-from typing import Annotated, Callable, Final, get_args, get_origin
+from collections.abc import Callable
+from typing import Annotated, Final, get_args, get_origin
 
 import pytest
 from fastapi import Depends, FastAPI, params
