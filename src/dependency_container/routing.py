@@ -3,20 +3,14 @@
 Factory for FastApi routers that inject delayed dependants into actual dependants.
 """
 
-import sys
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Any, Callable, Final, Generic, TypeVar, Union
+from typing import Any, Final, Generic, TypeVar
 
 from fastapi import APIRouter
 from fastapi.params import Depends
 
 from dependency_container.container import DependencyContainer
-
-if sys.version_info >= (3, 10):
-    _dataclass_kwargs: Final = {"frozen": True, "slots": True}
-else:
-    _dataclass_kwargs: Final = {"frozen": True}
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -29,7 +23,7 @@ class _CopySignature(Generic[F]):
         return wrapped  # type: ignore [reportReturnType]
 
 
-@dataclass(**_dataclass_kwargs)
+@dataclass(frozen=True, slots=True)
 class _Route:
     router_method: Callable[..., Any]
     args: tuple[Any, ...]
@@ -45,7 +39,7 @@ class InjectableRouter:
     """A router that can be injected with dependencies from a dependency container."""
 
     @_CopySignature(APIRouter.__init__)
-    def __init__(self, dependencies: Union[Sequence[Depends], None] = None, *args: list[Any], **kwargs: dict[str, Any]):
+    def __init__(self, dependencies: Sequence[Depends] | None = None, *args: list[Any], **kwargs: dict[str, Any]):
         """Create a new injectable router."""
         self._app_args = args
         self._app_kwargs = kwargs

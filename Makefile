@@ -3,21 +3,22 @@ SHELL := bash
 
 .PHONY: setup
 setup:
-	rye sync --all-features
+	uv sync --all-extras
 
 .PHONY: test
 test:
-	rye test
+	uv run pytest
 
 .PHONY: format
 format:
-	rye fmt
+	uv run ruff format
+	uv run ruff check --fix
 
 .PHONY: lint
 lint:
-	rye lint
-	rye run pyright .
+	uv run ruff check
+	uv run pyright .
 
 .PHONY: build
 build:
-	rye build
+	uv build
