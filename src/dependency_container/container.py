@@ -34,14 +34,24 @@ class _DelayedDependant:
     source_type: type
 
 
+def _get_dependent_source(dependent_origin: type) -> type:
+    """Get the source type of a dependent."""
+    origin = get_origin(dependent_origin)
+    if origin == Callable:
+        return get_args(dependent_origin)[1]
+    if origin is None:
+        raise TypeError(f"Dependant origin {dependent_origin} is not a valid type.")
+
+    return origin
+
+
 def _add_dependency_slots_to_namespace(namespace: dict[str, Any]) -> None:
     """Append the annotations of a class onto the namespace, making it a class variable."""
     annotations: Final[dict[str, Any]] = namespace.get("__annotations__", {})
     for attr_name, attr_type in annotations.items():
-        if get_origin(attr_type) != Callable:
-            raise TypeError("Receive invalid annotation.")
+        source_type = _get_dependent_source(attr_type)
         # Reannotate the endpoint with attr name for easy lookup later.
-        namespace[attr_name] = _DelayedDependant(attr=attr_name, source_type=get_args(attr_type)[1])
+        namespace[attr_name] = _DelayedDependant(attr=attr_name, source_type=source_type)
 
 
 @dataclass_transform(kw_only_default=True)
