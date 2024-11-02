@@ -34,15 +34,14 @@ class _DelayedDependant:
     source_type: type
 
 
-def _get_dependent_source(dependent_origin: type) -> type:
+def _get_dependent_source(dependent_origin: type | None) -> type:
     """Get the source type of a dependent."""
-    origin = get_origin(dependent_origin)
-    if origin == Callable:
+    if dependent_origin == Callable:
         return get_args(dependent_origin)[1]
-    if origin is None:
+    if dependent_origin is None:
         raise TypeError(f"Dependant origin {dependent_origin} is not a valid type.")
 
-    return origin
+    return dependent_origin
 
 
 def _add_dependency_slots_to_namespace(namespace: dict[str, Any]) -> None:
