@@ -4,7 +4,7 @@ Support delayed dependency injection in FastApi to enable app constructor patter
 """
 
 from dependency_container.container import DependencyContainer
-from dependency_container.routing import InjectableRouter
+from dependency_container.fastapi import InjectableRouter
 
 __all__: list[str] = ["DependencyContainer", "InjectableRouter"]
 __version__ = "0.2.0"
