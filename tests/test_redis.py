@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Annotated, Final
 
 import pytest
-from faststream.redis import RedisBroker, RedisRouter, TestRedisBroker
+from faststream.redis import RedisBroker, TestRedisBroker
 
 from dependency_container import DependencyContainer
 from dependency_container.faststream.redis import InjectableRedisRouter
@@ -22,7 +22,7 @@ container: Final = _MyContainer(x=_my_dependency)
 
 
 @pytest.mark.asyncio
-async def test_redis_subscriber():
+async def test_redis_pubsub():
     """Test that the redis injector works."""
     injector = InjectableRedisRouter()
     called = False
@@ -36,7 +36,6 @@ async def test_redis_subscriber():
         assert arg1 == 5
         assert msg == "test"
         return msg
-
 
     @injector.subscriber("channel2")
     async def channel2_sub(msg: str) -> None:
@@ -55,30 +54,32 @@ async def test_redis_subscriber():
 
 
 @pytest.mark.asyncio
-async def test_redis_publisher():
-    """Test that the redis publisher works."""
-    injector = RedisRouter()
+async def test_redis_subpub():
+    """Test that the redis injector works."""
+    injector = InjectableRedisRouter()
     called = False
-    called2 = False
+    foo2_called = False
 
-    @injector.subscriber("foo")
-    @injector.publisher("foo2")
-    async def foo_subscriber(msg: str) -> str:
+    @injector.subscriber("channel1")
+    @injector.publisher("channel2")
+    async def channel1_sub(arg1: Annotated[int, _MyContainer.x], msg: str) -> str:
         nonlocal called
         called = True
+        assert arg1 == 5
+        assert msg == "test"
         return msg
 
-    @injector.subscriber("foo2")
-    async def foo_publish(msg: str) -> None:
-        nonlocal called2
-        called2 = True
-        return "foo"
+    @injector.subscriber("channel2")
+    async def channel2_sub(msg: str) -> None:
+        nonlocal foo2_called
+        foo2_called = True
+        assert msg == "test"
 
-    router = injector
+    router = injector.create_router(container)
     broker = RedisBroker()
     broker.include_router(router)
 
     async with TestRedisBroker(broker) as test_broker:
-        await broker.publish("foo", "foo")
+        await test_broker.publish("test", "channel1")
     assert called
-    assert called2
+    assert foo2_called

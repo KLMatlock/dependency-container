@@ -21,7 +21,7 @@ class InjectableRouter:
     """A router that can be injected with dependencies from a dependency container."""
 
     @CopySignature(APIRouter.__init__)
-    def __init__(self, dependencies: Sequence[Depends] | None = None, *args: list[Any], **kwargs: dict[str, Any]):
+    def __init__(self, dependencies: Sequence[Depends] | None = None, *args: list[Any], **kwargs: Any):
         """Create a new injectable router."""
         self._app_args = args
         self._app_kwargs = kwargs
@@ -29,7 +29,7 @@ class InjectableRouter:
         self._router_dependencies = dependencies
 
     @CopySignature(APIRouter.get)
-    def get(self, *args: list[Any], **kwargs: dict[str, Any]):  # noqa: ANN201
+    def get(self, *args: list[Any], **kwargs: Any):  # noqa: ANN201
         """Wrap a GET endpoint with the router."""
 
         def decorator(func: Callable[[A], B]) -> Callable[[A], B]:
@@ -39,7 +39,7 @@ class InjectableRouter:
         return decorator
 
     @CopySignature(APIRouter.post)
-    def post(self, *args: list[Any], **kwargs: dict[str, Any]):  # noqa: ANN201
+    def post(self, *args: list[Any], **kwargs: Any):  # noqa: ANN201
         """Wrap a POST endpoint with the router."""
 
         def decorator(func: Callable[[A], B]) -> Callable[[A], B]:
@@ -49,7 +49,7 @@ class InjectableRouter:
         return decorator
 
     @CopySignature(APIRouter.put)
-    def put(self, *args: list[Any], **kwargs: dict[str, Any]):  # noqa: ANN201
+    def put(self, *args: list[Any], **kwargs: Any):  # noqa: ANN201
         """Wrap a PUT endpoint with the router."""
 
         def decorator(func: Callable[[A], B]) -> Callable[[A], B]:
@@ -59,7 +59,7 @@ class InjectableRouter:
         return decorator
 
     @CopySignature(APIRouter.delete)
-    def delete(self, *args: list[Any], **kwargs: dict[str, Any]):  # noqa: ANN201
+    def delete(self, *args: list[Any], **kwargs: Any):  # noqa: ANN201
         """Wrap a DELETE endpoint with the router."""
 
         def decorator(func: Callable[[A], B]) -> Callable[[A], B]:
@@ -69,7 +69,7 @@ class InjectableRouter:
         return decorator
 
     @CopySignature(APIRouter.patch)
-    def patch(self, *args: list[Any], **kwargs: dict[str, Any]):  # noqa: ANN201
+    def patch(self, *args: list[Any], **kwargs: Any):  # noqa: ANN201
         """Wrap a PATCH endpoint with the router."""
 
         def decorator(func: Callable[[A], B]) -> Callable[[A], B]:
