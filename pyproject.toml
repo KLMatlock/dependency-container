@@ -64,6 +64,7 @@ dev-dependencies = [
     "types-pyyaml>=6.0",
     "faststream[redis]>=0.5.28",
     "pytest-asyncio>=0.24.0",
+    "nats-py>=2.9.0",
 ]
 
 [tool.hatch.metadata]
