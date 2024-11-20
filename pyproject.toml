@@ -62,9 +62,8 @@ dev-dependencies = [
     "towncrier>=23.11.0",
     "types-markdown>=3.5",
     "types-pyyaml>=6.0",
-    "faststream[redis]>=0.5.28",
+    "faststream[redis,nats]>=0.5.28",
     "pytest-asyncio>=0.24.0",
-    "nats-py>=2.9.0",
 ]
 
 [tool.hatch.metadata]

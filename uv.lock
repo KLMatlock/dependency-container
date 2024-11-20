@@ -225,12 +225,11 @@ faststream = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "faststream", extra = ["redis"] },
+    { name = "faststream", extra = ["nats", "redis"] },
     { name = "griffe" },
     { name = "httpx" },
     { name = "mkdocs-gen-files" },
     { name = "mkdocs-material" },
-    { name = "nats-py" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -251,12 +250,11 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "faststream", extras = ["redis"], specifier = ">=0.5.28" },
+    { name = "faststream", extras = ["redis", "nats"], specifier = ">=0.5.28" },
     { name = "griffe", specifier = ">=0.40.0" },
     { name = "httpx", specifier = ">=0.26.0" },
     { name = "mkdocs-gen-files", specifier = ">=0.5.0" },
     { name = "mkdocs-material", specifier = ">=9.5.7" },
-    { name = "nats-py", specifier = ">=2.9.0" },
     { name = "pyright", specifier = ">=1.1.349" },
     { name = "pytest", specifier = ">=7.4" },
     { name = "pytest-asyncio", specifier = ">=0.24.0" },
@@ -329,6 +327,9 @@ wheels = [
 ]
 
 [package.optional-dependencies]
+nats = [
+    { name = "nats-py" },
+]
 redis = [
     { name = "redis" },
 ]
