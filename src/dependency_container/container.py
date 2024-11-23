@@ -7,10 +7,19 @@ import sys
 from abc import ABCMeta
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from enum import Enum
 from inspect import Parameter, Signature, signature
 from typing import Annotated, Any, Final, TypeVar, get_args, get_origin
 
 from fastapi import Depends, params
+
+
+class DependencySource(Enum):
+    """Enumeration for the source of a dependency."""
+
+    FASTAPI = "FastAPI"
+    FASTSTREAM = "FastStream"
+
 
 if sys.version_info >= (3, 11):
     from typing import dataclass_transform
@@ -82,7 +91,9 @@ def _get_delayed_dependent(annotation: type) -> _DelayedDependant | params.Depen
 class DependencyContainer(metaclass=_DependenceContainerMeta):
     """Holds depencies that are to be injected later."""
 
-    def insert_dependency_from_container(self, func: Callable[..., Any]) -> None:
+    def insert_dependency_from_container(
+        self, func: Callable[..., Any], source: DependencySource = DependencySource.FASTAPI
+    ) -> None:
         """Insert an annotated dependency from the container.
 
         Parameters
@@ -100,7 +111,13 @@ class DependencyContainer(metaclass=_DependenceContainerMeta):
             if isinstance(delayed_dependent, _DelayedDependant):
                 dependent: Callable[..., Any] = getattr(self, delayed_dependent.attr)
                 # TODO: Get original annotation.
-                new_param = param.replace(annotation=Annotated[delayed_dependent.source_type, Depends(dependent)])
+                if source == DependencySource.FASTAPI:
+                    depends_annotate = Depends(dependent)
+                elif source == DependencySource.FASTSTREAM:
+                    from faststream import Depends as FastStreamDepends
+
+                    depends_annotate = FastStreamDepends(dependent)
+                new_param = param.replace(annotation=Annotated[delayed_dependent.source_type, depends_annotate])
             elif isinstance(delayed_dependent, params.Depends) and delayed_dependent.dependency:
                 dependent: Callable[..., Any] = delayed_dependent.dependency
                 self.insert_dependency_from_container(dependent)
