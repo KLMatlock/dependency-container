@@ -17,7 +17,7 @@ B = TypeVar("B")
 class InjectableRedisRouter:
     """A wrapper for a Redis Router that allows for runtime injection."""
 
-    __slots__ = ("_prefix", "_handlers", "_router_kwargs", "_routes")
+    __slots__ = ("_handlers", "_prefix", "_router_kwargs", "_routes")
 
     @CopySignature(RedisRouter.__init__)
     def __init__(self, prefix: str = "", handlers: Iterable[RedisRoute] = (), **kwargs: Any):

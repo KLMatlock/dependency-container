@@ -57,9 +57,9 @@ def _get_deps(base_deps: Mapping[str, Mapping[str, str]]) -> dict[str, dict[str,
     again = True
     while again:
         again = False
-        for pkg_name in lock_pkgs:
+        for pkg_name, pkg_dependencies in lock_pkgs:
             if pkg_name in deps:
-                for pkg_dependency in lock_pkgs[pkg_name].get("dependencies", []):
+                for pkg_dependency in pkg_dependencies.get("dependencies", []):
                     parsed = regex.match(pkg_dependency).groupdict()  # type: ignore[union-attr]
                     dep_name = parsed["dist"].lower()
                     if dep_name in lock_pkgs and dep_name not in deps and dep_name != project["name"]:
