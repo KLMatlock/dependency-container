@@ -45,7 +45,7 @@ class _DelayedDependant:
 
 def _get_dependent_source(dependent_origin: type | None) -> type:
     """Get the source type of a dependent."""
-    if dependent_origin == Callable:
+    if isinstance(dependent_origin, Callable):
         return get_args(dependent_origin)[1]
     if dependent_origin is None:
         raise TypeError(f"Dependant origin {dependent_origin} is not a valid type.")

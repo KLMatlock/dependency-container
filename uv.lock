@@ -208,7 +208,7 @@ toml = [
 
 [[package]]
 name = "dependency-container"
-version = "0.2.0"
+version = "0.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
@@ -219,7 +219,7 @@ faststream = [
     { name = "faststream" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "faststream", extra = ["nats", "redis"] },
     { name = "griffe" },
@@ -244,7 +244,7 @@ requires-dist = [
     { name = "faststream", marker = "extra == 'faststream'", specifier = ">=0.5.26" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "faststream", extras = ["redis", "nats"], specifier = ">=0.5.28" },
     { name = "griffe", specifier = ">=0.40.0" },
