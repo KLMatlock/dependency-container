@@ -7,4 +7,4 @@ from dependency_container.container import DependencyContainer
 from dependency_container.fastapi import InjectableRouter
 
 __all__: list[str] = ["DependencyContainer", "InjectableRouter"]
-__version__ = "0.2.1"
+__version__ = "0.3.0"
