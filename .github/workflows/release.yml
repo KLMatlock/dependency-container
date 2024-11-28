@@ -24,6 +24,12 @@ jobs:
       run: make setup
     - name: Build wheel and sdist
       run: make build
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        compression-level: 0
+        path: dist/*
   pypi-publish:
     name: upload release to PyPI
     runs-on: ubuntu-latest
