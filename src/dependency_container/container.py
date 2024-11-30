@@ -5,7 +5,7 @@ Factory for FastApi routers that inject delayed dependants into actual dependant
 
 import sys
 from abc import ABCMeta
-from collections.abc import Callable, Sequence
+from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from inspect import Parameter, Signature, signature
@@ -46,7 +46,10 @@ class _DelayedDependant:
 def _get_dependent_source(dependent_origin: type | None) -> type:
     """Get the source type of a dependent."""
     if isinstance(dependent_origin, Callable):
-        return get_args(dependent_origin)[1]
+        source = get_args(dependent_origin)[1]
+        if getattr(source, "__origin__", None) == Awaitable:
+            return get_args(source)[0]
+        return source
     if dependent_origin is None:
         raise TypeError(f"Dependant origin {dependent_origin} is not a valid type.")
 

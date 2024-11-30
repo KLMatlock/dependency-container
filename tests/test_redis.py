@@ -1,6 +1,6 @@
 """Test for the redis injector."""
 
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from typing import Annotated, Final
 
 import pytest
@@ -11,10 +11,10 @@ from dependency_container.faststream.redis import InjectableRedisRouter
 
 
 class _MyContainer(DependencyContainer):
-    x: Callable[..., int]
+    x: Callable[..., Awaitable[int]]
 
 
-def _my_dependency() -> int:
+async def _my_dependency() -> int:
     return 5
 
 
